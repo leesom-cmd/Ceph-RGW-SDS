@@ -1,0 +1,4 @@
+RGW服务启动，配置生命周期，启动生命周期线程lc1-lc32；
+配置生命周期后，bucket生命周期配置信息存放在bucket info的attr中；
+PUT生命周期lc线程（radosgw-admin lc list）读取bucket 原有生命周期进行匹配，rule_id一致则更新，查找不到则添加，重新生成一份生命周期配置写入bucket info中。然后把bucket 信息HASH写入到生命周期pool的shard中；（双活环境会同步配置信息）
+生命周期线程读取生命周期pool中的shard key，通过记录的bucket信息读取bucket info中的生命周期配置，获取配置扫描bucket中的所有符合前缀的对象修改时间，如果修改时间+生命周期时间小于当前时间，把对象删除。
